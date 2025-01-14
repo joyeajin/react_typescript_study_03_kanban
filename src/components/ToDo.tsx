@@ -3,12 +3,19 @@ import { Categories, IToDo, toDoState } from "../atom";
 
 function ToDo({ text, category, id }: IToDo) {
   const setToDos = useSetRecoilState(toDoState);
+
   const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     const {
       currentTarget: { name },
     } = event;
+
     setToDos((oldToDos) => {
       const targetIndex = oldToDos.findIndex((toDo) => toDo.id === id);
+
+      if (name === "delete") {
+        return oldToDos.filter((toDo) => toDo.id !== id);
+      }
+
       const newToDo = { text, id, category: name as any };
 
       return [
@@ -18,6 +25,7 @@ function ToDo({ text, category, id }: IToDo) {
       ];
     });
   };
+
   return (
     <li>
       <span>{text}</span>
@@ -36,6 +44,9 @@ function ToDo({ text, category, id }: IToDo) {
           Done
         </button>
       )}
+      <button name="delete" onClick={onClick}>
+        delete
+      </button>
     </li>
   );
 }
