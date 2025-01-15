@@ -9,6 +9,8 @@ const Wrapper = styled.div`
   padding-top: 10px;
   border-radius: 5px;
   min-height: 300px;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Title = styled.h2`
@@ -16,6 +18,22 @@ const Title = styled.h2`
   font-weight: 600;
   margin-bottom: 10px;
   font-size: 18px;
+`;
+
+interface IAreaProps {
+  $isDraggingFromThis: boolean;
+  $isDraggingOver: boolean;
+}
+
+const Area = styled.div<IAreaProps>`
+  background-color: ${(props) =>
+    props.$isDraggingOver
+      ? "pink"
+      : props.$isDraggingFromThis
+      ? "red"
+      : "green"};
+  flex-grow: 1;
+  transition: background-color 0.3s ease-in-out;
 `;
 
 interface IBoardProps {
@@ -28,9 +46,10 @@ function Board({ toDos, boardId }: IBoardProps) {
     <Wrapper>
       <Title>{boardId}</Title>
       <Droppable droppableId={boardId}>
-        {(magic) => (
-          <div
-            style={{ backgroundColor: "red" }}
+        {(magic, info) => (
+          <Area
+            $isDraggingOver={info.isDraggingOver}
+            $isDraggingFromThis={Boolean(info.draggingFromThisWith)}
             ref={magic.innerRef}
             {...magic.droppableProps}
           >
@@ -38,7 +57,7 @@ function Board({ toDos, boardId }: IBoardProps) {
               <DraggableCard key={toDo} index={index} toDo={toDo} />
             ))}
             {magic.placeholder}
-          </div>
+          </Area>
         )}
       </Droppable>
     </Wrapper>
